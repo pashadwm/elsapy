@@ -4,14 +4,15 @@
     * https://dev.elsevier.com
     * https://api.elsevier.com"""
 
-from . import log_util
+import log_util
 from urllib.parse import quote_plus as url_encode
 import pandas as pd, json
-from .utils import recast_df
+from utils import recast_df
 
 logger = log_util.get_logger(__name__)
 
-class ElsSearch():
+
+class ElsSearch:
     """Represents a search to one of the search indexes accessible
          through api.elsevier.com. Returns True if successful; else, False."""
 
@@ -23,11 +24,13 @@ class ElsSearch():
 
     def __init__(self, query, index):
         """Initializes a search object with a query and target index."""
+        self._tot_num_res = None
+        self._results = None
         self.query = query
         self.index = index
         self._cursor_supported = (index in self._cursored_indexes)
         self._uri = self._base_url + self.index + '?query=' + url_encode(
-                self.query)
+            self.query)
         self.results_df = pd.DataFrame()
 
     # properties
@@ -85,21 +88,18 @@ class ElsSearch():
         else:
             return self.num_res >= 5000
 
-    
     def execute(
             self,
-            els_client = None,
-            get_all = False,
-            use_cursor = False,
-            view = None,
-            count = 25,
-            fields = []
-        ):
+            els_client=None,
+            get_all=False,
+            use_cursor=False,
+            view=None
+    ):
         """Executes the search. If get_all = False (default), this retrieves
             the default number of results specified for the API. If
             get_all = True, multiple API calls will be made to iteratively get 
             all results for the search, up to a maximum of 5,000."""
-        ## TODO: add exception handling
+        # TODO: add exception handling
         url = self._uri
         if use_cursor:
             url += "&cursor=*"
@@ -122,4 +122,4 @@ class ElsSearch():
     def hasAllResults(self):
         """Returns true if the search object has retrieved all results for the
             query from the index (i.e. num_res equals tot_num_res)."""
-        return (self.num_res is self.tot_num_res)
+        return self.num_res is self.tot_num_res

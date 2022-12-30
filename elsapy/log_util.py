@@ -4,13 +4,16 @@
     * https://dev.elsevier.com
     * https://api.elsevier.com"""
 
-import time, logging
+import logging
+import time
+
 try:
     from pathlib import Path
 except ImportError:
     from pathlib2 import Path
 
-## Following adapted from https://docs.python.org/3/howto/logging-cookbook.html
+# Following adapted from https://docs.python.org/3/howto/logging-cookbook.html
+
 
 def get_logger(name):
     # TODO: add option to disable logging, without stripping logger out of all modules
